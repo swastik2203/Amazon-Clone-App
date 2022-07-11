@@ -7,8 +7,18 @@ import Login from './Login';
 import {React, useEffect } from 'react';
 import { auth } from './firebase';
 import { useStateValue } from './StateProvider';
+import Payment from './Payment';
+import {loadStripe} from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import Orders from './Orders';
 
 function App() {
+
+  const promise = loadStripe
+  (
+    "pk_test_51LJE2eSGB5H8RXftZ0KYVt8RV84NpjxS76Bet6XqejIWMZMEqb2ef1ZZWbLH8PhwY3B7MxEpKneVSInyzSdEd7or003MvsIxhD"
+
+  )
 
   const [{}, dispatch] = useStateValue();
 
@@ -47,19 +57,29 @@ function App() {
         <Routes>
 
           <Route 
+              path = "/orders" 
+              element={[<Header />,<Orders/>]} 
+            />
+
+          <Route 
               path = "/login" 
               element={<Login/>} 
             />
 
             <Route 
-              path = "/" 
-              element={[<Header />, <Home />]}  /* we can render it outside the Routes so that we don't have to repeat it in every page */
-              
+              path="/checkout" 
+              element={[<Header />, <Checkout />]} 
             />
 
             <Route 
-              path="/checkout" 
-              element={[<Header />, <Checkout />]} 
+              path="/payment" 
+              element={[<Header />, <Elements stripe={promise}> <Payment/></Elements> ]} 
+            />
+
+            <Route 
+              exact path = "/" 
+              element={[<Header />, <Home />]}  /* we can render header outside the Routes so that we don't have to repeat it in every page */
+              
             />
 
             {/* <Route 
